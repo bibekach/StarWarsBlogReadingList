@@ -4,19 +4,30 @@ import { Link, useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 
 export const Single = props => {
-	const { store, actions } = useContext(Context);
 	const params = useParams();
+	const { store, actions } = useContext(Context);
+	const [item, setItem] = useState([]);
+	useEffect(() => {
+		getSingalCharacters();
+	}, [])
+
+	const getSingalCharacters = async () => {
+		const response = await fetch("https://rickandmortyapi.com/api/"+params.thetype+"/"+params.theid);
+		const data = await response.json();
+		setItem(data);
+	}
+
+
+
 	return (
-		<div className="jumbotron">
-			<h1 className="display-4">This will show the demo element: {store.demo[params.theid].title}</h1>
 
-			<hr className="my-4" />
-
-			<Link to="/">
-				<span className="btn btn-primary btn-lg" href="#" role="button">
-					Back home
-				</span>
-			</Link>
+		<div className="container">
+			<h1>{item.name}</h1>
+			{Object.keys(item).map((itemKey, index)=>{
+				if(typeof item[itemKey] != 'object')
+                    return <p key={index}>{itemKey}:{item[itemKey]}</p>
+                })
+                }
 		</div>
 	);
 };
